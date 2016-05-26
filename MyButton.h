@@ -12,15 +12,16 @@ class MyButton {
     unsigned long lastDebounceTime;
     void (*pressCallback)(MyButton*);
     void (*releaseCallback)(MyButton*);
+    void readOne();
+    void setupOne();
+    static void readAll();
+    static void loop();
   public:
     MyButton(int pin, void (*onPress)(MyButton*)=NULL, void (*onRelease)(MyButton*)=NULL);
-	  String label;
-	  int state;
+    String label;
+    int state;
     bool pressed;
-    void read();
-    static void readAll();
     static void setup();
-    static void loop();
     void onPress(void (*cb)(MyButton*));
     void onRelease(void (*cb)(MyButton*));
 };

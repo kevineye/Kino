@@ -4,8 +4,7 @@
 
 MyButton::MyButton(int buttonPin, void (*onPressCb)(MyButton*), void (*onReleaseCb)(MyButton*)) {
   pin = buttonPin;
-  pinMode(pin, INPUT_PULLUP);
-  state = digitalRead(pin);
+  state = HIGH;
   pressed = state == LOW;
   lastValue = state;
   lastDebounceTime = 0;
@@ -17,7 +16,7 @@ MyButton::MyButton(int buttonPin, void (*onPressCb)(MyButton*), void (*onRelease
 MyButton* MyButton::buttons[MAX_BUTTONS];
 int MyButton::numButtons = 0;
 
-void MyButton::read() {
+void MyButton::readOne() {
   int value = digitalRead(pin);
   if (value != lastValue) {
     lastDebounceTime = millis();
@@ -25,7 +24,7 @@ void MyButton::read() {
   if ((millis() - lastDebounceTime) > 10) {
     if (value != state){
       state = value;
-  	  pressed = state == LOW;
+      pressed = state == LOW;
       if (pressCallback && pressed) pressCallback(this);
       if (releaseCallback && !pressed) releaseCallback(this);
     }
@@ -33,9 +32,14 @@ void MyButton::read() {
   lastValue = value;
 }
 
+void MyButton::setupOne() {
+  pinMode(pin, INPUT_PULLUP);
+  state = digitalRead(pin);
+}
+
 void MyButton::readAll() {
   for (int i = 0; i < MyButton::numButtons; i++) {
-    MyButton::buttons[i]->read();
+    MyButton::buttons[i]->readOne();
   }
 }
 
@@ -53,5 +57,8 @@ void MyButton::onRelease(void (*cb)(MyButton*)) {
 }
 
 void MyButton::setup() {
+  for (int i = 0; i < MyButton::numButtons; i++) {
+    MyButton::buttons[i]->setupOne();
+  }
   Scheduler.start(NULL, MyButton::loop);
 }
