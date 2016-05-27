@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <Scheduler.h>
 #include "KButton.h"
 
 KButton::KButton(int buttonPin, void (*onPressCb)(KButton *), void (*onReleaseCb)(KButton *)) {
@@ -15,6 +14,7 @@ KButton::KButton(int buttonPin, void (*onPressCb)(KButton *), void (*onReleaseCb
 
 KButton *KButton::buttons[MAX_BUTTONS];
 int KButton::numButtons = 0;
+KTask KButton::task(5, KButton::loop);
 
 void KButton::readOne() {
     int value = digitalRead(pin);
@@ -45,7 +45,6 @@ void KButton::readAll() {
 
 void KButton::loop() {
     KButton::readAll();
-    delay(5);
 }
 
 void KButton::onPress(void (*cb)(KButton *)) {
@@ -60,5 +59,4 @@ void KButton::setup() {
     for (int i = 0; i < KButton::numButtons; i++) {
         KButton::buttons[i]->setupOne();
     }
-    Scheduler.start(NULL, KButton::loop);
 }

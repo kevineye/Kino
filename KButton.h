@@ -1,3 +1,5 @@
+#include "KTask.h"
+
 #ifndef KButton_h
 #define KButton_h
 
@@ -7,6 +9,8 @@ class KButton {
 private:
     static KButton *buttons[MAX_BUTTONS];
     static int numButtons;
+    static KTask task;
+
     int pin;
     int lastValue;
     unsigned long lastDebounceTime;
