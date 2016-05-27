@@ -3,14 +3,14 @@
 
 Adafruit_SSD1306 KDisplay::display;
 
-KDisplay::KDisplay() {
-//    display = Adafruit_SSD1306();
+KDisplay::KDisplay(long d) {
+    splashDelay = d;
 }
 
-void KDisplay::setup(int delayMs) {
+void KDisplay::init() {
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
     display.display();
-    delay(delayMs);
+    delay(splashDelay);
     display.setTextSize(1);
     display.setTextColor(WHITE);
     display.clearDisplay();
@@ -27,8 +27,4 @@ void KDisplay::set(char *s) {
 
 char *KDisplay::get() {
     return buffer;
-}
-
-Adafruit_SSD1306 *KDisplay::getDisplay() {
-    return &display;
 }
