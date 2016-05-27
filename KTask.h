@@ -5,14 +5,18 @@
 
 class KTask {
 private:
+    static int numTasks;
+    static void dispatch();
     int id;
 
 public:
-    KTask(unsigned long intervalMs, void (*callback)());
+    KTask(unsigned long intervalMs, void (*callback)() = KTask::dispatch);
 
     static void loop();
 
     static void setup();
+
+    void run();
 };
 
 #endif
