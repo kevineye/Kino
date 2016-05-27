@@ -6,7 +6,9 @@
 class KTask {
 private:
     static int numTasks;
+
     static void dispatch();
+
     int id;
 
 public:
@@ -16,7 +18,10 @@ public:
 
     static void setup();
 
-    void run();
+protected:
+    virtual void init();
+
+    virtual void run();
 };
 
 #endif
