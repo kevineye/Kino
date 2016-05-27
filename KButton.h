@@ -5,12 +5,8 @@
 
 #define MAX_BUTTONS 16
 
-class KButton {
+class KButton : protected KTask {
 private:
-    static KButton *buttons[MAX_BUTTONS];
-    static int numButtons;
-    static KTask task;
-
     int pin;
     int lastValue;
     unsigned long lastDebounceTime;
@@ -19,14 +15,6 @@ private:
 
     void (*releaseCallback)(KButton *);
 
-    void readOne();
-
-    void setupOne();
-
-    static void readAll();
-
-    static void loop();
-
 public:
     KButton(int pin, void (*onPress)(KButton *) = NULL, void (*onRelease)(KButton *) = NULL);
 
@@ -34,11 +22,15 @@ public:
     int state;
     bool pressed;
 
-    static void setup();
-
     void onPress(void (*cb)(KButton *));
 
     void onRelease(void (*cb)(KButton *));
+
+protected:
+    virtual void init() override;
+
+    virtual void run() override;
+
 };
 
 #endif

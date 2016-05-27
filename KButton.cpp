@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "KButton.h"
 
-KButton::KButton(int buttonPin, void (*onPressCb)(KButton *), void (*onReleaseCb)(KButton *)) {
+KButton::KButton(int buttonPin, void (*onPressCb)(KButton *), void (*onReleaseCb)(KButton *)) : KTask(5) {
     pin = buttonPin;
     state = HIGH;
     pressed = state == LOW;
@@ -9,14 +9,9 @@ KButton::KButton(int buttonPin, void (*onPressCb)(KButton *), void (*onReleaseCb
     lastDebounceTime = 0;
     if (onPressCb) this->onPress(onPressCb);
     if (onReleaseCb) this->onRelease(onReleaseCb);
-    buttons[numButtons++] = this;
 }
 
-KButton *KButton::buttons[MAX_BUTTONS];
-int KButton::numButtons = 0;
-KTask KButton::task(5, KButton::loop);
-
-void KButton::readOne() {
+void KButton::run() {
     int value = digitalRead(pin);
     if (value != lastValue) {
         lastDebounceTime = millis();
@@ -32,19 +27,9 @@ void KButton::readOne() {
     lastValue = value;
 }
 
-void KButton::setupOne() {
+void KButton::init() {
     pinMode(pin, INPUT_PULLUP);
     state = digitalRead(pin);
-}
-
-void KButton::readAll() {
-    for (int i = 0; i < KButton::numButtons; i++) {
-        KButton::buttons[i]->readOne();
-    }
-}
-
-void KButton::loop() {
-    KButton::readAll();
 }
 
 void KButton::onPress(void (*cb)(KButton *)) {
@@ -53,10 +38,4 @@ void KButton::onPress(void (*cb)(KButton *)) {
 
 void KButton::onRelease(void (*cb)(KButton *)) {
     releaseCallback = cb;
-}
-
-void KButton::setup() {
-    for (int i = 0; i < KButton::numButtons; i++) {
-        KButton::buttons[i]->setupOne();
-    }
 }
