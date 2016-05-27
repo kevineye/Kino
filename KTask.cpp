@@ -10,10 +10,15 @@ Task *KTask_tasks[MAX_TASKS];
 KTask *KTask_ktasks[MAX_TASKS];
 int KTask::numTasks = 0;
 
-KTask::KTask(unsigned long intervalMs, void (*callback)()) {
+KTask::KTask(long interval, void (*callback)()) {
+    // use interval=-1 (default) for setup-only tasks
     id = KTask::numTasks++;
-    KTask_tasks[id] = new Task(intervalMs, TASK_FOREVER, callback);
-    KTask_tasks[id]->setLtsPointer(this);
+    if (interval >= 0) {
+        KTask_tasks[id] = new Task(interval, TASK_FOREVER, callback);
+        KTask_tasks[id]->setLtsPointer(this);
+    } else {
+        KTask_tasks[id] = NULL;
+    }
     KTask_ktasks[id] = this;
 }
 
@@ -36,8 +41,10 @@ void KTask::run() {
 void KTask::setup() {
     KTask_runner.init();
     for (int i = 0; i < KTask::numTasks; i++) {
-        KTask_runner.addTask(*KTask_tasks[i]);
-        KTask_tasks[i]->enable();
+        if (KTask_tasks[i]) {
+            KTask_runner.addTask(*KTask_tasks[i]);
+            KTask_tasks[i]->enable();
+        }
         KTask_ktasks[i]->init();
     }
 }

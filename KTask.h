@@ -12,7 +12,7 @@ private:
     int id;
 
 public:
-    KTask(unsigned long intervalMs, void (*callback)() = KTask::dispatch);
+    KTask(long interval = -1, void (*callback)() = KTask::dispatch);
 
     static void loop();
 
