@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include <Scheduler.h>
-#include "MyButton.h"
+#include "KButton.h"
 
-MyButton::MyButton(int buttonPin, void (*onPressCb)(MyButton *), void (*onReleaseCb)(MyButton *)) {
+KButton::KButton(int buttonPin, void (*onPressCb)(KButton *), void (*onReleaseCb)(KButton *)) {
     pin = buttonPin;
     state = HIGH;
     pressed = state == LOW;
@@ -13,10 +13,10 @@ MyButton::MyButton(int buttonPin, void (*onPressCb)(MyButton *), void (*onReleas
     buttons[numButtons++] = this;
 }
 
-MyButton *MyButton::buttons[MAX_BUTTONS];
-int MyButton::numButtons = 0;
+KButton *KButton::buttons[MAX_BUTTONS];
+int KButton::numButtons = 0;
 
-void MyButton::readOne() {
+void KButton::readOne() {
     int value = digitalRead(pin);
     if (value != lastValue) {
         lastDebounceTime = millis();
@@ -32,33 +32,33 @@ void MyButton::readOne() {
     lastValue = value;
 }
 
-void MyButton::setupOne() {
+void KButton::setupOne() {
     pinMode(pin, INPUT_PULLUP);
     state = digitalRead(pin);
 }
 
-void MyButton::readAll() {
-    for (int i = 0; i < MyButton::numButtons; i++) {
-        MyButton::buttons[i]->readOne();
+void KButton::readAll() {
+    for (int i = 0; i < KButton::numButtons; i++) {
+        KButton::buttons[i]->readOne();
     }
 }
 
-void MyButton::loop() {
-    MyButton::readAll();
+void KButton::loop() {
+    KButton::readAll();
     delay(5);
 }
 
-void MyButton::onPress(void (*cb)(MyButton *)) {
+void KButton::onPress(void (*cb)(KButton *)) {
     pressCallback = cb;
 }
 
-void MyButton::onRelease(void (*cb)(MyButton *)) {
+void KButton::onRelease(void (*cb)(KButton *)) {
     releaseCallback = cb;
 }
 
-void MyButton::setup() {
-    for (int i = 0; i < MyButton::numButtons; i++) {
-        MyButton::buttons[i]->setupOne();
+void KButton::setup() {
+    for (int i = 0; i < KButton::numButtons; i++) {
+        KButton::buttons[i]->setupOne();
     }
-    Scheduler.start(NULL, MyButton::loop);
+    Scheduler.start(NULL, KButton::loop);
 }
