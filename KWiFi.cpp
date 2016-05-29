@@ -1,6 +1,5 @@
 #include "KWiFi.h"
 #include "KEvent.h"
-#include <Adafruit_WINC1500.h>
 #include <Arduino.h>
 #include <string.h>
 
@@ -11,6 +10,7 @@ char *KWiFi::pass = NULL;
 KWiFi::KWiFi(char *s, char *p) : KTask(5000) {
     ssid = s;
     pass = p;
+    wifi = &WiFi;
 }
 
 #ifdef KWIFI_SERIAL_STATUS
@@ -20,15 +20,29 @@ void KEvent_on_wifi_disconnect(KEvent event, void *callbackData) {
 };
 
 void KEvent_on_wifi_connect(KEvent event, void *callbackData) {
-    Serial.println("WiFi connected.");
+    KWiFi *wifi = (KWiFi *) callbackData;
+    Serial.print("WiFi connected to ");
+    Serial.println(wifi->wifi->SSID());
+    Serial.print("IP: ");
+    IPAddress ip = wifi->wifi->localIP();
+    Serial.println(ip);
+    Serial.print("Signal: ");
+    Serial.print(wifi->wifi->RSSI());
+    Serial.println(" dBm");
 };
 
 void KEvent_on_wifi_failed(KEvent event, void *callbackData) {
-    Serial.println("WiFi connect failed.");
+    KWiFi *wifi = (KWiFi *) callbackData;
+    Serial.print("WiFi connect to ");
+    Serial.print(wifi->ssid);
+    Serial.println(" failed.");
 };
 
 void KEvent_on_wifi_connecting(KEvent event, void *callbackData) {
-    Serial.println("WiFi attempting to connect...");
+    KWiFi *wifi = (KWiFi *) callbackData;
+    Serial.print("WiFi attempting to conncet to ");
+    Serial.print(wifi->ssid);
+    Serial.println("...");
 };
 #endif
 
@@ -55,12 +69,12 @@ void KWiFi::run() {
 //    Serial.println(WiFi.status());
 
     if (WiFi.status() != WL_NO_SHIELD) {
-        // attempt to connect to Wifi network:
         if (connected && WiFi.status() != WL_CONNECTED) {
             KEvent::emit(KEVENT_WIFI_DISCONNECT, NULL);
         }
         if (connecting && WiFi.status() == WL_CONNECTED) {
             KEvent::emit(KEVENT_WIFI_CONNECT, NULL);
+            connecting = false;
         }
         if (connecting && WiFi.status() == WL_CONNECT_FAILED) {
             connecting = false;

@@ -1,4 +1,5 @@
 #include "KTask.h"
+#include <Adafruit_WINC1500.h>
 
 #ifndef KWiFi_h
 #define KWiFi_h
@@ -23,6 +24,7 @@ public:
     static char *pass;
     bool connected = false;
     bool connecting = false;
+    Adafruit_WINC1500 *wifi;
 
 protected:
     virtual void init() override;
