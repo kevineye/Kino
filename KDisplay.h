@@ -5,11 +5,12 @@
 #ifndef KDisplay_h
 #define KDisplay_h
 
-#define DISPLAY_BUFFER_SIZE 84
+#define KDISPLAY_BUFFER_SIZE 84
 
-class KDisplay : protected KTask {
+class KDisplay : protected KTask, public Print {
 private:
-    char buffer[DISPLAY_BUFFER_SIZE + 1];
+    char buffer[KDISPLAY_BUFFER_SIZE + 1];
+    size_t bufferLen;
     long splashDelay;
 
 public:
@@ -20,6 +21,15 @@ public:
     void set(char *text = "");
 
     char *get();
+
+    size_t write(uint8_t c) override;
+
+    // make sure to call flush after print()ing or clear()ing
+    // not necessary after set()
+    void flush();
+
+    // use clear() instead of set("") to clear without actually blanking the screen
+    void clear();
 
 protected:
     virtual void init() override;

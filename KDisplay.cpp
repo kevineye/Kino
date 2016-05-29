@@ -5,6 +5,7 @@ Adafruit_SSD1306 KDisplay::display;
 
 KDisplay::KDisplay(long d) {
     splashDelay = d;
+    bufferLen = 0;
 }
 
 void KDisplay::init() {
@@ -18,11 +19,33 @@ void KDisplay::init() {
 }
 
 void KDisplay::set(char *s) {
-    strncpy(buffer, s, DISPLAY_BUFFER_SIZE);
+    strncpy(buffer, s, KDISPLAY_BUFFER_SIZE);
+    bufferLen = strlen(buffer);
     display.clearDisplay();
     display.setCursor(0, 0);
-    display.print(s);
+    display.print(buffer);
     display.display();
+}
+
+void KDisplay::clear() {
+    buffer[0] = '\0';
+    bufferLen = 0;
+    display.clearDisplay();
+    display.setCursor(0, 0);
+}
+
+void KDisplay::flush() {
+    display.display();
+}
+
+size_t KDisplay::write(uint8_t c) {
+    if (bufferLen < KDISPLAY_BUFFER_SIZE) {
+        buffer[++bufferLen] = c;
+        display.print((char) c);
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 char *KDisplay::get() {
