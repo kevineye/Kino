@@ -1,28 +1,20 @@
 #include "KTask.h"
-#include <ArduinoHttpServer.h>
-#include <Adafruit_WINC1500.h>
+#include <Adafruit_WiFiMDNSResponder.h>
 
-#ifndef KHTTPSERVER_H
-#define KHTTPSERVER_H
+#ifndef KMDNS_H
+#define KMDNS_H
 
-#define KEVENT_HTTPSERVER_REQUEST         0x00002001
-
-typedef Adafruit_WINC1500Server KHttpServerImpl;
-typedef Adafruit_WINC1500Client KHttpClient;
-typedef ArduinoHttpServer::StreamHttpRequest<1023> KHttpRequest;
-
-class KHttpServer : protected KTask {
+class KMDNS : protected KTask {
 public:
-    KHttpServer(int port);
+    KMDNS(char *name);
 
-    int port;
-    KHttpServerImpl server = NULL;
+    char name[256];
+    Adafruit_WiFiMDNSResponder mdnsResponder;
 
 protected:
     virtual void init() override;
 
     virtual void run() override;
 };
-
 
 #endif

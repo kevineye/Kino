@@ -1,12 +1,14 @@
 #include <KTask.h>
 #include <KWiFi.h>
 #include <KHttpServer.h>
+#include <KMDNS.h>
 #include <KEvent.h>
 #include <KDisplay.h>
 
 KDisplay display;
 KWiFi wifi("ssid", "pass");
 KHttpServer server(80);
+KMDNS mdns("feather");
 
 void disconnect(KEvent event, void *callbackData) {
     display.set("Disconnected");
@@ -19,6 +21,9 @@ void connect(KEvent event, void *callbackData) {
     display.print("http://");
     IPAddress ip = wifi.wifi->localIP();
     display.println(ip);
+    display.print("http://");
+    display.print(mdns.name);
+    display.println(".local");
     display.flush();
 };
 

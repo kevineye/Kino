@@ -1,31 +1,20 @@
-#include "KHttpServer.h"
+#include "KMDNS.h"
 #include "KEvent.h"
 #include "KWiFi.h"
 
-KHttpServer::KHttpServer(int p) : KTask(10) {
-    port = p;
-    server = Adafruit_WINC1500Server(port);
+KMDNS::KMDNS(char *n) : KTask(10) {
+    strncpy(name, n, 255);
 }
 
-void KHttpServer_on_wifi_connect(KEvent event, void *callbackData) {
-    KHttpServer *kserver = (KHttpServer *) callbackData;
-    kserver->server.begin();
+void KMDNS_on_wifi_connect(KEvent event, void *callbackData) {
+    KMDNS *mdns = (KMDNS *) callbackData;
+    mdns->mdnsResponder.begin(mdns->name);
 }
 
-void KHttpServer::init() {
-    KEvent::on(KEVENT_WIFI_CONNECT, KHttpServer_on_wifi_connect, this);
+void KMDNS::init() {
+    KEvent::on(KEVENT_WIFI_CONNECT, KMDNS_on_wifi_connect, this);
 }
 
-void KHttpServer::run() {
-    KHttpClient client(server.available());
-    if (client.connected()) {
-        KHttpRequest httpRequest(client);
-        if (httpRequest.readRequest()) {
-            KEvent::emit(KEVENT_HTTPSERVER_REQUEST, &httpRequest);
-            client.stop();
-        } else {
-            ArduinoHttpServer::StreamHttpErrorReply httpReply(client, httpRequest.getContentType());
-            httpReply.send(httpRequest.getErrorDescrition());
-        }
-    }
+void KMDNS::run() {
+    mdnsResponder.poll();
 }
