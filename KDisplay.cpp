@@ -28,7 +28,7 @@ void KDisplay::set(char *s) {
 }
 
 void KDisplay::clear() {
-    buffer[0] = '\0';
+    buffer[0] = 0;
     bufferLen = 0;
     display.clearDisplay();
     display.setCursor(0, 0);
@@ -40,7 +40,8 @@ void KDisplay::flush() {
 
 size_t KDisplay::write(uint8_t c) {
     if (bufferLen < KDISPLAY_BUFFER_SIZE) {
-        buffer[++bufferLen] = c;
+        buffer[bufferLen++] = c;
+        buffer[bufferLen] = 0;
         display.print((char) c);
         return 1;
     } else {
