@@ -7,11 +7,12 @@
 #include <KMqtt.h>
 #include <KButton.h>
 #include <KDisplay.h>
+#include <KWatchdog.h>
 
 #define BUTTON_A    9
 #define BUTTON_B    6
 #define BUTTON_C    5
-#define LEDPIN      13
+#define LEDPIN      LED_BUILTIN
 
 #define WIFI_SSID   "ssid"
 #define WIFI_PASS   "pass"
@@ -21,6 +22,7 @@
 #define MQTT_PASS   "aio-key"
 #define MDNS_NAME   "feather"
 
+KWatchdog watchdog;
 KDisplay display;
 KWiFi wifi(WIFI_SSID, WIFI_PASS);
 Adafruit_WINC1500Client client;
@@ -146,3 +148,31 @@ void setup() {
 void loop() {
     KTask::loop();
 }
+
+char * timeToString(unsigned long t)
+{
+    static char str[12];
+    long h = t / 3600;
+    t = t % 3600;
+    int m = t / 60;
+    int s = t % 60;
+    sprintf(str, "%04ld:%02d:%02d", h, m, s);
+    return str;
+}
+
+void displayTime() {
+    display.display.fillRect(11*6, 3*8, 10*6, 1*8, 0);
+    display.display.setCursor(11*6, 3*8);
+    display.display.print(timeToString(millis()/1000));
+    display.display.display();
+}
+KTask displayTimer(1000, displayTime);
+
+const char RUNTIME_FEED[] = MQTT_USER "/feeds/runtime";
+KMqttPublish runtimePub = KMqttPublish(&mqtt, RUNTIME_FEED);
+
+void publishTime() {
+    if (mqtt.connected()) runtimePub.publish(timeToString(millis()/1000));
+}
+KTask publishTimer(15000, publishTime);
+
