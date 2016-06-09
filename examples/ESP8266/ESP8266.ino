@@ -5,6 +5,7 @@
 #include <KEvent.h>
 #include <KMDNS.h>
 #include <KMQtt.h>
+#include <KWatchdog.h>
 
 #define WIFI_SSID   "ssid"
 #define WIFI_PASS   "pass"
@@ -16,6 +17,7 @@
 
 #define LEDPIN LED_BUILTIN
 
+KWatchdog watchdog;
 KWiFi wifi(WIFI_SSID, WIFI_PASS);
 KHttpServer server(80);
 KMDNS mdns(MDNS_NAME);
