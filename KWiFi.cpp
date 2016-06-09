@@ -3,7 +3,10 @@
 #include <Arduino.h>
 #include <string.h>
 
-Adafruit_WINC1500 WiFi(WINC_CS, WINC_IRQ, WINC_RST);
+#ifndef ARDUINO_ARCH_ESP8266
+    KWiFiImpl WiFi(WINC_CS, WINC_IRQ, WINC_RST);
+#endif
+
 char *KWiFi::ssid = NULL;
 char *KWiFi::pass = NULL;
 

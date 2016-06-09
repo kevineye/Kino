@@ -1,7 +1,10 @@
 #include <SPI.h>
 #include <KTask.h>
+#include <KWiFi.h>
 
 #define LEDPIN LED_BUILTIN
+
+KWiFi wifi("ssid", "pass");
 
 bool ledOn = false;
 void blink() {

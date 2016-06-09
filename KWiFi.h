@@ -1,5 +1,9 @@
 #include "KTask.h"
-#include <Adafruit_WINC1500.h>
+#ifdef ARDUINO_ARCH_ESP8266
+    #include <ESP8266WiFi.h>
+#else
+    #include <Adafruit_WINC1500.h>
+#endif
 
 #ifndef KWiFi_h
 #define KWiFi_h
@@ -16,6 +20,12 @@
 
 #define KWIFI_SERIAL_STATUS 1
 
+#ifdef ARDUINO_ARCH_ESP8266
+    typedef ESP8266WiFiClass KWiFiImpl;
+#else
+    typedef Adafruit_WINC1500 KWiFiImpl;
+#endif
+
 class KWiFi : protected KTask {
 public:
     KWiFi(char *ssid, char *pass);
@@ -24,7 +34,7 @@ public:
     static char *pass;
     bool connected = false;
     bool connecting = false;
-    Adafruit_WINC1500 *wifi;
+    KWiFiImpl *wifi;
 
 protected:
     virtual void init() override;
