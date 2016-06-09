@@ -43,7 +43,7 @@ void KEvent_on_wifi_failed(KEvent event, void *callbackData) {
 
 void KEvent_on_wifi_connecting(KEvent event, void *callbackData) {
     KWiFi *wifi = (KWiFi *) callbackData;
-    Serial.print("WiFi attempting to conncet to ");
+    Serial.print("WiFi attempting to connect to ");
     Serial.print(wifi->ssid);
     Serial.println("...");
 };
