@@ -9,6 +9,8 @@ class KMqtt : protected KTask, public Adafruit_MQTT_Client {
 public:
     KMqtt(Client *client, const char *server, uint16_t port, const char *cid, const char *user, const char *pass);
 
+    KMqtt(const char *server, uint16_t port, const char *cid, const char *user, const char *pass);
+
     void kConnect();
 
     bool wifiUp;

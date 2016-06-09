@@ -2,8 +2,22 @@
 #include "KEvent.h"
 #include "KWiFi.h"
 
+Client *KMqtt_make_client() {
+#ifdef ARDUINO_ARCH_ESP8266
+    WiFiClient *client = new WiFiClient;
+#else
+    Adafruit_WINC1500Client *client = new Adafruit_WINC1500Client;
+#endif
+    return client;
+}
+
 KMqtt::KMqtt(Client *client, const char *server, uint16_t port, const char *cid, const char *user, const char *pass)
         : KTask(10), Adafruit_MQTT_Client(client, server, port, cid, user, pass) {
+    wifiUp = false;
+}
+
+KMqtt::KMqtt(const char *server, uint16_t port, const char *cid, const char *user, const char *pass)
+        : KTask(10), Adafruit_MQTT_Client(KMqtt_make_client(), server, port, cid, user, pass) {
     wifiUp = false;
 }
 

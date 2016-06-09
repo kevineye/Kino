@@ -20,12 +20,6 @@ KWiFi wifi(WIFI_SSID, WIFI_PASS);
 KHttpServer server(80);
 KMDNS mdns(MDNS_NAME);
 
-#ifdef ARDUINO_ARCH_ESP8266
-    WiFiClient client;
-#else
-    Adafruit_WINC1500Client client;
-#endif
-
 bool ledOn = false;
 void blink() {
     if (ledOn) {
@@ -56,7 +50,7 @@ void request(KEvent event, void *callbackData) {
 };
 
 const char MQTT_CLIENTID[] = __TIME__ MQTT_USER;
-KMqtt mqtt(&client, MQTT_SERVER, MQTT_PORT, MQTT_CLIENTID, MQTT_USER, MQTT_PASS);
+KMqtt mqtt(MQTT_SERVER, MQTT_PORT, MQTT_CLIENTID, MQTT_USER, MQTT_PASS);
 
 const char PUB_FEED[] = MQTT_USER "/feeds/counter-pub";
 KMqttPublish counterPub = KMqttPublish(&mqtt, PUB_FEED);
