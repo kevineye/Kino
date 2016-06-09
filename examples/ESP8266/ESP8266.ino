@@ -3,11 +3,13 @@
 #include <KWiFi.h>
 #include <KHttpServer.h>
 #include <KEvent.h>
+#include <KMDNS.h>
 
 #define LEDPIN LED_BUILTIN
 
 KWiFi wifi("ssid", "password");
 KHttpServer server(80);
+KMDNS mdns("esp");
 
 bool ledOn = false;
 void blink() {
