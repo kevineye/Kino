@@ -4,7 +4,7 @@
 
 KHttpServer::KHttpServer(int p) : KTask(10) {
     port = p;
-    server = Adafruit_WINC1500Server(port);
+    server = KHttpServerImpl(port);
 }
 
 void KHttpServer_on_wifi_connect(KEvent event, void *callbackData) {
